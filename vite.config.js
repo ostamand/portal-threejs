@@ -1,3 +1,4 @@
 export default {
-  base: "/portal-threejs/",
+    base: "/portal-threejs/",
+    publicDir: "./static/",
 };
