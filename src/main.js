@@ -4,11 +4,11 @@ import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import firefliesVertexShader from "./shaders/fireflies/vertex.glsl";
 import firefliesFragmentShader from "./shaders/fireflies/fragment.glsl";
-import { generateUUID } from "three/src/math/MathUtils.js";
 
 // gui
 const debugObject = {};
 const gui = new dat.GUI({ width: 400 });
+gui.hide();
 
 // canvas
 const scene = new THREE.Scene();
@@ -34,6 +34,7 @@ camera.position.set(2, 3, 5);
 // orbit controls
 const controls = new OrbitControls(camera, canvas);
 controls.enableDamping = true;
+controls.maxPolarAngle = Math.PI / 2; // don't go below ground
 
 // renderer
 const renderer = new THREE.WebGLRenderer({
@@ -45,6 +46,7 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
 debugObject.clearColor = "#140d13";
 renderer.setClearColor(debugObject.clearColor);
+
 gui.addColor(debugObject, "clearColor").onChange(() =>
     renderer.setClearColor(debugObject.clearColor)
 );
