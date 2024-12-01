@@ -1,6 +1,10 @@
 import * as THREE from "three";
+import * as dat from "dat.gui";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+
+// gui
+const gui = new dat.GUI();
 
 const scene = new THREE.Scene();
 const canvas = document.getElementById("root");
@@ -31,9 +35,7 @@ const camera = new THREE.PerspectiveCamera(
     0.1,
     100
 );
-camera.position.z = 5;
-camera.position.y = 3;
-camera.position.x = 2;
+camera.position.set(2, 3, 5);
 
 // orbit controls
 const controls = new OrbitControls(camera, canvas);
@@ -58,13 +60,27 @@ bakedTexture.colorSpace = THREE.SRGBColorSpace;
 
 // materials
 const bakedMaterial = new THREE.MeshBasicMaterial({ map: bakedTexture });
-const poleLightMaterial = new THREE.MeshBasicMaterial({ color: 0xf3e163 });
+const poleLightMaterial = new THREE.MeshBasicMaterial({ color: 0xede8c7 });
+const portalLightMaterial = new THREE.MeshBasicMaterial({
+    color: 0xedd1d3,
+    side: THREE.DoubleSide,
+});
 
 // load environment
-gltfLoader.load("models/portal_baked.glb", (loadedAsset) => {
-    loadedAsset.scene.traverse((child) => {
-        child.material = bakedMaterial;
-    });
+gltfLoader.load("models/portal_baked_v3.glb", (loadedAsset) => {
+    loadedAsset.scene.children.find((mesh) => mesh.name === "baked").material =
+        bakedMaterial;
+
+    loadedAsset.scene.children.find((mesh) => mesh.name === "lightA").material =
+        poleLightMaterial;
+    loadedAsset.scene.children.find((mesh) => mesh.name === "lightB").material =
+        poleLightMaterial;
+
+    const portal = loadedAsset.scene.children.find(
+        (mesh) => mesh.name === "portal"
+    );
+    portal.material = portalLightMaterial;
+
     scene.add(loadedAsset.scene);
 });
 
