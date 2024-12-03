@@ -318,29 +318,38 @@ window.addEventListener("resize", () => {
     firefliesMaterial.uniforms.uPixelRatio.value = pixelRatio;
 });
 
-// events: click
-window.addEventListener("click", (event) => {
-    if (event.target === canvas) {
-        const mouse = {
-            x: (event.clientX / sizes.width) * 2 - 1,
-            y: -((event.clientY / sizes.height) * 2 - 1),
-        };
+const handleClick = (clientX, clientY) => {
+    const mouse = {
+        x: (clientX / sizes.width) * 2 - 1,
+        y: -((clientY / sizes.height) * 2 - 1),
+    };
 
-        // raycast
-        raycaster.setFromCamera(mouse, camera);
-        const intersects = raycaster.intersectObject(environmentModel);
+    // raycast
+    raycaster.setFromCamera(mouse, camera);
+    const intersects = raycaster.intersectObject(environmentModel);
 
-        // check if clicked on axe
-        if (!states.axePlaying) {
-            const axes = intersects.filter((intersect) =>
-                intersect.object.name.startsWith("axe")
-            );
-            if (axes.length) {
-                actions.axe.reset();
-                actions.axe.play();
-            }
+    // check if clicked on axe
+    if (!states.axePlaying) {
+        const axes = intersects.filter((intersect) =>
+            intersect.object.name.startsWith("axe")
+        );
+        if (axes.length) {
+            actions.axe.reset();
+            actions.axe.play();
         }
     }
+};
+
+// events: click
+window.addEventListener("click", (event) => {
+    if (event.target !== canvas) return;
+    handleClick(event.clientX, event.clientY);
+});
+
+window.addEventListener("touchstart", (event) => {
+    if (event.target !== canvas) return;
+    const touch = event.touches[0];
+    handleClick(touch.clientX, touch.clientY);
 });
 
 // loop
